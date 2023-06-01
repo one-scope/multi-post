@@ -1,0 +1,36 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/docker-existing-dockerfile
+{
+	"name": "Golang on VSCode",
+	"build": {
+		"context": ".",
+		"dockerfile": "./Dockerfile",
+		"args": {
+			"GO_VERSION": "1.19"
+		},
+		"target": "devcontainer"
+	},
+	"containerUser": "vscode",
+	"remoteUser": "vscode",
+	"updateRemoteUserUID": true,
+	"runArgs": [
+		"--init",
+		"--net=host"
+	],
+	"mounts": [
+		"source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind",
+		"source=${localWorkspaceFolder}/.devcontainer/.extensions,target=/home/vscode/.vscode-server/extensions,type=bind",
+		"source=${localWorkspaceFolder}/.devcontainer/.go,target=/home/vscode/go,type=bind"
+	],
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"766b.go-outliner",
+				"golang.go",
+				"jgclark.vscode-todo-highlight",
+				"liuchao.go-struct-tag",
+				"streetsidesoftware.code-spell-checker"
+			]
+		}
+	}
+}
