@@ -7,9 +7,8 @@ import (
 )
 
 var (
-	Token    = "MTExNDg2MDI3NzYwMzc3ODYwMA.GIlUuP.yecJsyGp16z-EHsuCs_eiFKI3oP73WPeNbClOI" //"Bot"という接頭辞がないと401 unauthorizedエラーが起きます
-	ClientID = "1114860277603778600"
-	GuildID  = "1114864523350900769" //サーバID
+	Token   = "xxxxxxxxx" //"Bot"という接頭辞がないと401 unauthorizedエラーが起きます
+	GuildID = "xxxxxxxxx" //サーバID
 )
 
 type Bot struct {
