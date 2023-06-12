@@ -7,8 +7,8 @@ import (
 )
 
 var (
-	Token   = "xxxxxxxxx" //"Bot"という接頭辞がないと401 unauthorizedエラーが起きます
-	GuildID = "xxxxxxxxx" //サーバID
+	Token   = "xxxxxxxx" //"Bot"という接頭辞がないと401 unauthorizedエラーが起きます
+	GuildID = "xxxxxxxx" //サーバID
 )
 
 type Bot struct {
