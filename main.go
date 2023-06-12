@@ -4,6 +4,9 @@ import (
 	"flag"
 	"fmt"
 	"os"
+
+	"github.com/one-scope/multi-post/discord"
+	"github.com/one-scope/multi-post/slack"
 )
 
 var (
@@ -19,5 +22,26 @@ func main() {
 	if tError != nil {
 		fmt.Fprintln(os.Stderr, tError)
 		os.Exit(1)
+	}
+
+	//Botのセットアップ
+	//このswitchのタイプ分けいる？もうちょっとスマートに書けへんの
+	for key, tService := range tConfig.Services {
+		switch tService.Type {
+		case "discord":
+			tDiscord := discord.Bot{}
+			tDiscord.SetCredentials(tService.Credentials)
+			ServiceMap[key] = &tDiscord
+		case "slack":
+			tSlack := slack.Bot{}
+			tSlack.SetCredentials(tService.Credentials)
+			ServiceMap[key] = &tSlack
+		}
+	}
+
+	//投稿処理
+	//変数名がまどろっこしいこれあかんと思う
+	for _, channel := range tConfig.Channels[*tChannel] {
+		ServiceMap[channel.Service].SendMessage(channel.Channel, tContent)
 	}
 }

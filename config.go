@@ -9,6 +9,7 @@ import (
 
 var ServiceMap map[string]interface {
 	SetCredentials(string)
+	SendMessage(string, string) error
 }
 
 type config struct {
