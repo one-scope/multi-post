@@ -7,10 +7,10 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-var ServiceMap map[string]interface {
-	SetCredentials(string)
+var ServiceMap = make(map[string]interface {
+	SetCredentials(string) error
 	SendMessage(string, string) error
-}
+})
 
 type config struct {
 	Services map[string]service   `yaml:"services"` //大文字じゃないとダメ
@@ -36,6 +36,5 @@ func ReadConfig(aFile string) (*config, error) {
 	if tError := yaml.Unmarshal(tByte, &tConfig); tError != nil {
 		return nil, fmt.Errorf("failed to extract config from %s: %w", aFile, tError)
 	}
-
 	return &tConfig, nil
 }

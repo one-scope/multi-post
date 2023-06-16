@@ -11,11 +11,16 @@ import (
 
 var (
 	CONFIG_FILE = "config.yaml"
+	VERSION     = "Version 1.0.0"
 )
 
 func main() {
+	tVersion := flag.Bool("version", false, "Show version")
 	tChannel := flag.String("channel", "default", "Set channel")
 	flag.Parse()
+	if *tVersion {
+		fmt.Fprintln(os.Stdout, VERSION)
+	}
 	tContent := flag.Arg(0)
 
 	tConfig, tError := ReadConfig(CONFIG_FILE)
@@ -30,11 +35,17 @@ func main() {
 		switch tService.Type {
 		case "discord":
 			tDiscord := discord.Bot{}
-			tDiscord.SetCredentials(tService.Credentials)
+			if tError := tDiscord.SetCredentials(tService.Credentials); tError != nil {
+				fmt.Fprintln(os.Stderr, tError)
+				os.Exit(1)
+			}
 			ServiceMap[key] = &tDiscord
 		case "slack":
 			tSlack := slack.Bot{}
-			tSlack.SetCredentials(tService.Credentials)
+			if tError := tSlack.SetCredentials(tService.Credentials); tError != nil {
+				fmt.Fprintln(os.Stderr, tError)
+				os.Exit(1)
+			}
 			ServiceMap[key] = &tSlack
 		}
 	}
@@ -42,6 +53,9 @@ func main() {
 	//投稿処理
 	//変数名がまどろっこしいこれあかんと思う
 	for _, channel := range tConfig.Channels[*tChannel] {
-		ServiceMap[channel.Service].SendMessage(channel.Channel, tContent)
+		if tError := ServiceMap[channel.Service].SendMessage(channel.Channel, tContent); tError != nil {
+			fmt.Fprintln(os.Stderr, tError)
+			os.Exit(1)
+		}
 	}
 }

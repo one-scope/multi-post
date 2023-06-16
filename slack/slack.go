@@ -1,19 +1,32 @@
 package slack
 
 import (
+	"encoding/json"
 	"fmt"
+	"os"
 
 	"github.com/slack-go/slack"
 )
 
-var token = "adsfadfadf"
+type credentials struct {
+	Token string `json:"Token"`
+}
 
 type Bot struct {
 	*slack.Client
 }
 
-func (aSlack *Bot) SetCredentials(aFile string) {
-	aSlack.Client = slack.New(token)
+func (aSlack *Bot) SetCredentials(aFile string) error {
+	tByte, tError := os.ReadFile(aFile)
+	if tError != nil {
+		return fmt.Errorf("failed to read %s: %w", aFile, tError)
+	}
+	tCredentials := credentials{}
+	if tError := json.Unmarshal(tByte, &tCredentials); tError != nil {
+		return fmt.Errorf("failed to extract credentials from %s: %w", aFile, tError)
+	}
+	aSlack.Client = slack.New(tCredentials.Token)
+	return nil
 }
 
 func (aSlack Bot) SendMessage(aChannel string, aContent string) error {
