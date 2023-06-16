@@ -1,6 +1,8 @@
 # multi-post
 discord, slackの指定したチャンネルに同じ内容のテキストを同時に投稿します．\
-後述する`config.yaml`を実行ファイルと同じディレクトリにおいて実行すると動きます．
+以下のファイルを実行ファイルと同じディレクトリにおいて実行すると動きます．
+- `config.yaml`
+- credentialsで指定するファイル
 # 使い方
 ## config.yamlの設定
 以下は`config.yaml`の一例です．
@@ -29,7 +31,7 @@ channels:
 | `service` | `services`にあるサービスの中から指定 |
 | `channel` | 投稿したいチャンネル名 |
 
-## credentialsで指定するファイルの設定
+## credentialsで指定するファイルの形式
 jsonファイルで以下の様に設定
 ### discord
 ```
