@@ -10,20 +10,25 @@ import (
 )
 
 var (
-	CONFIG_FILE = "config.yaml"
-	VERSION     = "Version 1.0.0"
+	VERSION = "Version 1.0.0"
 )
 
 func main() {
-	tVersion := flag.Bool("version", false, "Show version")
-	tChannel := flag.String("channel", "default", "Set channel")
+	tShowVersion := flag.Bool("version", false, "Show version")
+	tGroup := flag.String("channel", "default", "Set channel")
+	tConfigFile := flag.String("config", "config.yaml", "Set config file")
 	flag.Parse()
-	if *tVersion {
+	if *tShowVersion {
 		fmt.Fprintln(os.Stdout, VERSION)
+		return
 	}
 	tContent := flag.Arg(0)
+	if tContent == "" {
+		fmt.Fprintln(os.Stderr, "please specify message")
+		os.Exit(1)
+	}
 
-	tConfig, tError := ReadConfig(CONFIG_FILE)
+	tConfig, tError := readConfig(*tConfigFile)
 	if tError != nil {
 		fmt.Fprintln(os.Stderr, tError)
 		os.Exit(1)
@@ -31,7 +36,7 @@ func main() {
 
 	//Botのセットアップ
 	//このswitchのタイプ分けいる？もうちょっとスマートに書けへんの
-	for key, tService := range tConfig.Services {
+	for tKey, tService := range tConfig.Services {
 		switch tService.Type {
 		case "discord":
 			tDiscord := discord.Bot{}
@@ -39,21 +44,26 @@ func main() {
 				fmt.Fprintln(os.Stderr, tError)
 				os.Exit(1)
 			}
-			ServiceMap[key] = &tDiscord
+			ServiceMap[tKey] = &tDiscord
 		case "slack":
 			tSlack := slack.Bot{}
 			if tError := tSlack.SetCredentials(tService.Credentials); tError != nil {
 				fmt.Fprintln(os.Stderr, tError)
 				os.Exit(1)
 			}
-			ServiceMap[key] = &tSlack
+			ServiceMap[tKey] = &tSlack
 		}
 	}
 
+	//バリデーション
+	tChannels, tOK := tConfig.Groups[*tGroup]
+	if !tOK {
+		fmt.Fprintln(os.Stderr, "not found \""+*tGroup+"\" channels. please specify channels exactly")
+		os.Exit(1)
+	}
 	//投稿処理
-	//変数名がまどろっこしいこれあかんと思う
-	for _, channel := range tConfig.Channels[*tChannel] {
-		if tError := ServiceMap[channel.Service].SendMessage(channel.Channel, tContent); tError != nil {
+	for _, tGroup := range tChannels {
+		if tError := ServiceMap[tGroup.Service].SendMessage(tGroup.Channel, tContent); tError != nil {
 			fmt.Fprintln(os.Stderr, tError)
 			os.Exit(1)
 		}
