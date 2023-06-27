@@ -13,7 +13,7 @@ services:
     credentials: ./onescope-credentials.json
   another-slack:
     type: slack
-    credentials: ./another-slack.env
+    credentials: ./another-slack.json
 channels:
   webdev:
     - service: onescope-discord
@@ -40,10 +40,31 @@ jsonファイルで以下の様に設定
     "GuildID": "xxxxxx"
 }
 ```
+`Token`は[Discord Developer Portal](https://discord.com/developers/applications)にて取得．接頭辞の`Bot`は付けなくてよい．
+`GuildID`はdiscordのサーバーID．
 ### slack
 ```
 {
-    "Token": "xxxxxx"
+    "Token": "xoxp-xxxxxx"
 }
 ```
+`Token`はユーザートークンを用いる．BotのScopeは`chat:Write`のみで良い．
 
+## 詳しい始め方
+### discord
+1. [Discord Developer Portal](https://discord.com/developers/applications)にアクセス．
+1. New Applicationをクリックし，新しくBotを作る．
+1. サイドバーからBotのタブにアクセス．`Token`を取得．前述したdiscordのjsonファイルの`Token`欄にペースト．
+1. サイドバーからOAuth2/Generalのタブにアクセス．Client IDをコピーする．
+1. `https://discordapp.com/oauth2/authorize?client_id=YOUR_CLIENT_ID&scope=bot&permissions=0`にアクセス．`YOUR_CLIENT_ID`をBotのClient IDに置き換える．
+1. Botを導入したいサーバーを選択して認証する．
+1. ツールを実行するとBotとして指定チャンネルに投稿してくれる．
+
+### slack
+1. [Slack API: Applications](https://api.slack.com/apps)にアクセス．
+1. Create New Appをクリックして新しくBotを作る．この際，`From scratch`を選択．Botを導入したいワークスペースを選択する．
+1. サイドバーからOAuth & Permissionsタブにアクセス．
+1. User Token Scopesにある，Add an OAuth Scopeをクリック．少しスクロールして`chat:write`を選択．
+1. OAuth Tokens for Your Workspaceにある，Install to Workspaceをクリック．
+1. User OAuth Tokenから`Token`を取得．前述したslackのjsonファイルの`Token`欄にペースト．
+1. ツールを実行すると上記の作業をしていたアカウントとして指定チャンネルに投稿してくれる．
