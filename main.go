@@ -35,7 +35,6 @@ func main() {
 	}
 
 	//Botのセットアップ
-	//このswitchのタイプ分けいる？もうちょっとスマートに書けへんの
 	for tKey, tService := range tConfig.Services {
 		var tBot Bot
 		switch tService.Type {
@@ -43,11 +42,14 @@ func main() {
 			tBot = &discord.Bot{}
 		case "slack":
 			tBot = &slack.Bot{}
-
 		}
 		if tError := tBot.SetCredentials(tService.Credentials); tError != nil {
 			fmt.Fprintln(os.Stderr, tError)
 			os.Exit(1)
+		}
+		//discordのみ終了処理
+		if tDiscordBot, tOK := tBot.(*discord.Bot); tOK {
+			tDiscordBot.Close()
 		}
 		ServiceMap[tKey] = tBot
 	}
