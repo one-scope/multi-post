@@ -7,10 +7,12 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-var ServiceMap = make(map[string]interface {
+type Bot interface {
 	SetCredentials(string) error
 	SendMessage(string, string) error
-})
+}
+
+var ServiceMap = make(map[string]Bot)
 
 type config struct {
 	Services map[string]service `yaml:"services"` //大文字じゃないとダメ

@@ -37,22 +37,19 @@ func main() {
 	//Botのセットアップ
 	//このswitchのタイプ分けいる？もうちょっとスマートに書けへんの
 	for tKey, tService := range tConfig.Services {
+		var tBot Bot
 		switch tService.Type {
 		case "discord":
-			tDiscord := discord.Bot{}
-			if tError := tDiscord.SetCredentials(tService.Credentials); tError != nil {
-				fmt.Fprintln(os.Stderr, tError)
-				os.Exit(1)
-			}
-			ServiceMap[tKey] = &tDiscord
+			tBot = &discord.Bot{}
 		case "slack":
-			tSlack := slack.Bot{}
-			if tError := tSlack.SetCredentials(tService.Credentials); tError != nil {
-				fmt.Fprintln(os.Stderr, tError)
-				os.Exit(1)
-			}
-			ServiceMap[tKey] = &tSlack
+			tBot = &slack.Bot{}
+
 		}
+		if tError := tBot.SetCredentials(tService.Credentials); tError != nil {
+			fmt.Fprintln(os.Stderr, tError)
+			os.Exit(1)
+		}
+		ServiceMap[tKey] = tBot
 	}
 
 	//バリデーション
