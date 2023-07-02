@@ -9,17 +9,17 @@ import (
 	"github.com/one-scope/multi-post/slack"
 )
 
-var (
-	VERSION = "Version 1.0.0"
+const (
+	version = "Version 1.0.0"
 )
 
 func main() {
 	tShowVersion := flag.Bool("version", false, "Show version")
-	tGroup := flag.String("channel", "default", "Set channel")
+	tGroupID := flag.String("channel", "default", "Set channel")
 	tConfigFile := flag.String("config", "config.yaml", "Set config file")
 	flag.Parse()
 	if *tShowVersion {
-		fmt.Fprintln(os.Stdout, VERSION)
+		fmt.Fprintln(os.Stdout, version)
 		return
 	}
 	tContent := flag.Arg(0)
@@ -35,7 +35,7 @@ func main() {
 	}
 
 	//Botのセットアップ
-	for tKey, tService := range tConfig.Services {
+	for tKey, tService := range tConfig.ServiceByID {
 		var tBot Bot
 		switch tService.Type {
 		case "discord":
@@ -51,18 +51,18 @@ func main() {
 		if tDiscordBot, tOK := tBot.(*discord.Bot); tOK {
 			tDiscordBot.Close()
 		}
-		ServiceMap[tKey] = tBot
+		botByServiceName[tKey] = tBot
 	}
 
 	//バリデーション
-	tChannels, tOK := tConfig.Groups[*tGroup]
+	tChannels, tOK := tConfig.GroupByID[*tGroupID]
 	if !tOK {
-		fmt.Fprintln(os.Stderr, "not found \""+*tGroup+"\" channels. please specify channels exactly")
+		fmt.Fprintln(os.Stderr, "not found \""+*tGroupID+"\" channels. please specify channels exactly")
 		os.Exit(1)
 	}
 	//投稿処理
 	for _, tGroup := range tChannels {
-		if tError := ServiceMap[tGroup.Service].SendMessage(tGroup.Channel, tContent); tError != nil {
+		if tError := botByServiceName[tGroup.Service].SendMessage(tGroup.Channel, tContent); tError != nil {
 			fmt.Fprintln(os.Stderr, tError)
 			os.Exit(1)
 		}

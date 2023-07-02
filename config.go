@@ -12,11 +12,11 @@ type Bot interface {
 	SendMessage(string, string) error
 }
 
-var ServiceMap = make(map[string]Bot)
+var botByServiceName = make(map[string]Bot)
 
 type config struct {
-	Services map[string]service `yaml:"services"` //大文字じゃないとダメ
-	Groups   map[string][]group `yaml:"channels"`
+	ServiceByID map[string]service `yaml:"services"`
+	GroupByID   map[string][]group `yaml:"channels"`
 }
 
 type service struct {
