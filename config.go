@@ -12,8 +12,6 @@ type Bot interface {
 	SendMessage(string, string) error
 }
 
-var botByServiceName = make(map[string]Bot)
-
 type config struct {
 	ServiceByID map[string]service `yaml:"services"`
 	GroupByID   map[string][]group `yaml:"channels"`

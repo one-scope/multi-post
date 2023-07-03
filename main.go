@@ -35,6 +35,7 @@ func main() {
 	}
 
 	//Botのセットアップ
+	var botByServiceName = make(map[string]Bot)
 	for tKey, tService := range tConfig.ServiceByID {
 		var tBot Bot
 		switch tService.Type {
@@ -55,13 +56,13 @@ func main() {
 	}
 
 	//バリデーション
-	tChannels, tOK := tConfig.GroupByID[*tGroupID]
+	tGroups, tOK := tConfig.GroupByID[*tGroupID]
 	if !tOK {
 		fmt.Fprintln(os.Stderr, "not found \""+*tGroupID+"\" channels. please specify channels exactly")
 		os.Exit(1)
 	}
 	//投稿処理
-	for _, tGroup := range tChannels {
+	for _, tGroup := range tGroups {
 		if tError := botByServiceName[tGroup.Service].SendMessage(tGroup.Channel, tContent); tError != nil {
 			fmt.Fprintln(os.Stderr, tError)
 			os.Exit(1)
