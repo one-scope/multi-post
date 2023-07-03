@@ -3,6 +3,11 @@ discord, slackの指定したチャンネルに同じ内容のテキストを同
 以下のファイルを実行ファイルと同じディレクトリにおいて実行すると動きます．
 - `config.yaml`
 - credentialsで指定するファイル
+
+コマンド例
+```
+$ ./multi-post --channel CHANNEL [ARG...] "CONTENT"
+```
 # 使い方
 ## config.yamlの設定
 以下は`config.yaml`の一例です．
