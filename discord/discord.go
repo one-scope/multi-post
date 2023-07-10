@@ -47,5 +47,5 @@ func (aDiscord Bot) SendMessage(aChannel string, aContent string) error {
 		}
 		return nil
 	}
-	return fmt.Errorf("the specified channel cannot be found")
+	return fmt.Errorf("failed to send message to discord: channel_not_found")
 }

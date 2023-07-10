@@ -7,14 +7,14 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-var ServiceMap = make(map[string]interface {
+type Bot interface {
 	SetCredentials(string) error
 	SendMessage(string, string) error
-})
+}
 
 type config struct {
-	Services map[string]service   `yaml:"services"` //大文字じゃないとダメ
-	Channels map[string][]channel `yaml:"channels"`
+	ServiceByID map[string]service `yaml:"services"`
+	GroupByID   map[string][]group `yaml:"channels"`
 }
 
 type service struct {
@@ -22,12 +22,12 @@ type service struct {
 	Credentials string `yaml:"credentials"`
 }
 
-type channel struct {
+type group struct {
 	Service string `yaml:"service"`
 	Channel string `yaml:"channel"`
 }
 
-func ReadConfig(aFile string) (*config, error) {
+func readConfig(aFile string) (*config, error) {
 	tConfig := config{}
 	tByte, tError := os.ReadFile(aFile)
 	if tError != nil {
